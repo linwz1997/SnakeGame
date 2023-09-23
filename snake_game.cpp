@@ -1,6 +1,8 @@
 #include <iostream>
 #include <time.h>
 #include <string>
+#include <unistd.h>  
+#include <fcntl.h>
 using namespace std;
 
 bool gameOver; // game over flag
@@ -101,40 +103,40 @@ void draw(void)
 /*Handling User Input in the game*/
 void Input(void)
 {
-    int c = 0;
+    char buf[1];
+    system("stty raw"); //stty — set the options for a terminal device interface
+                        // If set stty in the raw mode, then no input or output processing is performed.  
+                        // All input will just sent straight through. 
+    system("stty -echo"); // To hide the input
+    fcntl(0, F_SETFL, fcntl(0, F_GETFL) | O_NONBLOCK); // To get char without being blocked.
+                                                       // if using getchar(), the while(1) loop will be blocked. 
+    read(0, buf, 1); // Read 1 byte data from the stdin buffer "buf".
+    system("stty cooked"); // The terminal driver is a line-based system. 
+                            // Characters are buffered internally until a carriage return (Enter or Return) 
+                            // before it is passed to the program - this is called "cooked". 
     
-    while (1)
+    switch (buf[0])
     {
-        system("stty raw"); //stty — set the options for a terminal device interface
-                            // If set stty in the raw mode, then no input or output processing is performed.  
-                            // All input will just sent straight through. 
-        system("stty -echo"); // To hide the input
-        c = getchar();
-        system("stty cooked"); // The terminal driver is a line-based system. 
-                               // Characters are buffered internally until a carriage return (Enter or Return) 
-                               // before it is passed to the program - this is called "cooked". 
-        switch (c)
-        {
-            case 'w':
-                dir = UP;
-                //cout << "UP" << endl;
-                break;
-            case 'a':
-                dir = LEFT;
-                //cout << "LEFT" << endl;
-                break;
-            case 's':
-                dir = DOWN;
-                //cout << "DOWN" << endl;
-                break;
-            case 'd':
-                dir = RIGHT;
-                //cout << "RIGHT" << endl;
-                break;
-            case 'x':
-                gameOver = true;
-                cout << "Game Over" << endl;
-                break;
+        case 'w':
+            dir = UP;
+            //cout << "UP" << endl;
+            break;
+        case 'a':
+            dir = LEFT;
+            //cout << "LEFT" << endl;
+            break;
+        case 's':
+            dir = DOWN;
+            //cout << "DOWN" << endl;
+            break;
+        case 'd':
+            dir = RIGHT;
+            //cout << "RIGHT" << endl;
+            break;
+        case 'x':
+            gameOver = true;
+            cout << "Game Over" << endl;
+            break;
     }
         
     return;

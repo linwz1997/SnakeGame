@@ -50,7 +50,7 @@ void draw(void)
 
     system("clear"); // clears the console
 
-    for (i = 0; i < width + 2; i++) // prints the top border of the game screen
+    for (i = 0; i <= width + 2; i++) // prints the top border of the game screen
     {
         cout << "#";
     }
@@ -60,7 +60,7 @@ void draw(void)
     {
         for (j = 0; j < width + 2; j++) // iterates each col of the game screen
         {
-            if (j == 0 || j == width) // prints the left-side and right-side border
+            if (j == 0 || j == width + 1) // prints the left-side and right-side border
             {
                 cout << "#";
             }
@@ -92,7 +92,7 @@ void draw(void)
         }
         cout << endl;
     }
-    for (i = 0; i < width + 2; i++) // prints the bottom border of the game screen
+    for (i = 0; i <= width + 2; i++) // prints the bottom border of the game screen
     {
         cout << "#";
     }

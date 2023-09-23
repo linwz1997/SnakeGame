@@ -5,8 +5,8 @@ using namespace std;
 
 bool gameOver; // game over flag
 
-int width = 60; // width and height of game screen
-int height = 20;
+int width = 60; // width of game screen
+int height = 20; // height of game screen
 
 int x, y; // represent current position of the snake
 int fruitX, fruitY; // represent the pos that the snake is going to eat
@@ -133,12 +133,98 @@ void Input(void)
             case 'x':
                 gameOver = true;
                 cout << "Game Over" << endl;
-                system("stty cooked");
-                system("stty echo"); // Stop hiding the input
-                exit(0);
+                break;
+    }
+        
+    return;
+}
+
+/*Setup the game logic*/
+void GameLogic(void)
+{
+    int prevX, prevY; //Store the previous pos of the snake's head
+    int prev2X, prev2Y;
+    int i;
+
+    prevX = tailX[0];
+    prevY = tailY[0];
+    tailX[0] = x;
+    tailY[0] = y;
+
+    for (i = 1; i < nTail; i++)
+    {
+        prev2X = tailX[i];
+        prev2Y = tailY[i];
+        tailX[i] = prevX;
+        tailY[i] = prevY;
+        prevX = prev2X;
+        prevY = prev2Y;
+    }
+    
+    if (dir)
+    {
+        switch (dir)
+        {
+            case LEFT:
+                x--;
+                dir = LEFT;
+                break;
+            case RIGHT:
+                x++;
+                dir = RIGHT;
+                break;
+            case UP:
+                y--;
+                dir = UP;
+                break;
+            case DOWN:
+                y++;
+                dir = DOWN;
                 break;
         }
     }
+    
+    if (((x > width) || (x < 0)) || (y > height) || (y <= 0))
+    {
+        cout << "Hit the wall" << endl;
+        cout << "Game Over" << endl;
+        gameOver = true;
+        return;
+    }
+
+    for (i = 0; i < nTail; i++)
+    {
+        if (tailX[i] == x && tailY[i] == y)
+        {
+            cout << "Hit the tail" << endl;
+            cout << "Game Over" << endl;
+            gameOver = true;
+            return;
+        }
+    }
+
+    if (x == fruitX && y == fruitY)
+    {
+        score += 1;
+        nTail++;
+        srand((unsigned) time(0));
+        fruitX = rand() % width + 1;
+        fruitY = rand() % height + 1;
+    }
+
+    if (score <= 3)
+    {
+        usleep(500000);
+    }
+    else if (score > 3 && score <= 7)
+    {
+        usleep(300000);
+    }
+    else if (score > 7)
+    {
+        usleep(100000);
+    }
+
     return;
 }
 
@@ -146,6 +232,17 @@ void Input(void)
 int main(void)
 {
     init();
-    draw();
-    Input();
+
+    while (1)
+    {
+        draw();
+        Input();
+        GameLogic();
+        if (gameOver)
+        {
+            system("stty cooked");
+            system("stty echo");
+            exit(0);
+        }
+    }
 }

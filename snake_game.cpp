@@ -29,7 +29,7 @@ Direction dir;
 void init(void)
 {
     gameOver = false; 
-    dir = STOP;
+    dir = RIGHT; //Set initial movement as RIGHT
     x = width / 2;
     y = height / 2;
     fruitX = rand() % width;
